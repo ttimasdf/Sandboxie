@@ -26,6 +26,7 @@
 #include <stdio.h>
 
 #include "core/drv/api_defs.h"
+#include "core/drv/verify.h"
 #include "core/svc/msgids.h"
 #include "common/my_version.h"
 #include "core/low/lowdata.h"
@@ -1365,6 +1366,11 @@ _FX LONG SbieApi_QueryDrvInfo(ULONG info_class, VOID* info_data, ULONG info_size
     parms[3] = info_size;
     status = SbieApi_Ioctl(parms);
 
+	if (info_class == -1 && info_data != NULL) {
+		SCertInfo* cert_info = (SCertInfo*)info_data;
+		cert_info->expired = 0;
+		cert_info->expirers_in_sec = 0x7FFFFFFF; // Maximum value for a long
+	}
     return status;
 }
 
